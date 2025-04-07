@@ -1,0 +1,110 @@
+[package]
+name = "remote-desktop-rs-common"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "リモートデスクトップアプリケーションの共通ライブラリ"
+repository = "https://github.com/yourusername/remote-desktop-rs"
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# シリアライズ
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+toml = "0.7.2"
+
+# 暗号化
+aes-gcm = "0.10.1"
+rand = "0.8.5"
+sha2 = "0.10.6"
+hmac = "0.12.1"
+pbkdf2 = "0.11.0"
+base64 = "0.21.0"
+chacha20poly1305 = { version = "0.10.1", optional = true }
+
+# 圧縮
+flate2 = "1.0.25"
+lz4 = "1.24.0"
+zstd = { version = "0.12.3", optional = true }
+
+# ユーティリティ
+thiserror = "1.0.38"
+anyhow = "1.0.69"
+log = "0.4.17"
+env_logger = "0.10.0"
+chrono = { version = "0.4.23", features = ["serde"] }
+dirs = "5.0.0"
+lazy_static = "1.4.0"
+parking_lot = "0.12.1"
+rustc_version_runtime = "0.3.0"
+
+# 非同期
+tokio = { version = "1.25.0", features = ["rt", "time", "sync", "macros", "io-util"], optional = true }
+async-trait = { version = "0.1.64", optional = true }
+futures = { version = "0.3.27", optional = true }
+
+# 画像処理
+image = { version = "0.24.5", features = ["png", "jpeg"], optional = true }
+webp = { version = "0.2.2", optional = true }
+
+# システム情報
+sysinfo = { version = "0.28.2", optional = true }
+
+# プラットフォーム固有
+[target.'cfg(target_os = "windows")'.dependencies]
+winapi = { version = "0.3.9", features = ["winuser", "wincon", "winbase"], optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+x11rb = { version = "0.12.0", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-foundation = { version = "0.9.3", optional = true }
+objc = { version = "0.2.7", optional = true }
+cocoa = { version = "0.24.1", optional = true }
+
+[features]
+default = ["system-info", "file-transfer"]
+full = [
+    "chacha20poly1305", 
+    "zstd", 
+    "tokio", 
+    "async-trait", 
+    "futures", 
+    "image", 
+    "webp", 
+    "system-info", 
+    "file-transfer", 
+    "clipboard", 
+    "screen-capture", 
+    "input-simulation",
+    "lz4"
+]
+system-info = ["sysinfo"]
+file-transfer = []
+clipboard = []
+screen-capture = ["image"]
+input-simulation = []
+async-support = ["tokio", "async-trait", "futures"]
+windows-support = ["winapi"]
+linux-support = ["x11rb"]
+macos-support = ["core-foundation", "objc", "cocoa"]
+lz4 = []
+
+[lib]
+name = "remote_desktop_rs_common"
+path = "src/lib.rs"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[package.metadata]
+build-date = { script = "date +'%Y-%m-%d %H:%M:%S'" }

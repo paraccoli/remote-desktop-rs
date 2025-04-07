@@ -1,0 +1,33 @@
+[build]
+# クロスコンパイル設定
+# target = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc", "x86_64-apple-darwin"]
+
+[target.x86_64-pc-windows-msvc]
+# Windowsビルド最適化
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.x86_64-unknown-linux-gnu]
+# Linux向け最適化
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.x86_64-apple-darwin]
+# macOS向け最適化
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[profile.release]
+# リリースビルド最適化
+lto = "fat"       # リンク時最適化を有効化
+codegen-units = 1 # コード生成ユニットを最小化して最適化を強化
+opt-level = 3     # 最大の最適化レベル
+panic = "abort"   # パニック時にバックトレースを生成せずに即座に終了
+strip = true      # バイナリから不要なシンボルを削除
+
+[unstable]
+# 高速ビルドのための実験的機能
+mtime-on-use = true
+build-std = false
+
+[net]
+# クレートダウンロード設定
+git-fetch-with-cli = true   # gitコマンドラインを使用
+retry = 3                   # 再試行回数

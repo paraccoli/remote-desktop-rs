@@ -1,0 +1,34 @@
+{
+    "name": "remote-desktop-rs-web-client",
+    "version": "0.1.0",
+    "description": "リモートデスクトップWebクライアント",
+    "main": "js/index.js",
+    "scripts": {
+      "build": "webpack --mode production",
+      "start": "webpack serve --mode development",
+      "clean": "rimraf dist pkg",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Your Name <your.email@example.com>",
+    "license": "MIT",
+    "dependencies": {
+      "wasm-feature-detect": "^1.2.11"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.21.3",
+      "@babel/preset-env": "^7.20.2",
+      "@wasm-tool/wasm-pack-plugin": "^1.6.0",
+      "babel-loader": "^9.1.2",
+      "clean-webpack-plugin": "^4.0.0",
+      "copy-webpack-plugin": "^11.0.0",
+      "css-loader": "^6.7.3",
+      "file-loader": "^6.2.0",
+      "html-webpack-plugin": "^5.5.0",
+      "rimraf": "^4.4.0",
+      "style-loader": "^3.3.2",
+      "wasm-loader": "^1.3.0",
+      "webpack": "^5.76.2",
+      "webpack-cli": "^5.0.1",
+      "webpack-dev-server": "^4.13.1"
+    }
+  }

@@ -1,0 +1,102 @@
+[package]
+name = "remote-desktop-rs-client"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "リモートデスクトップクライアント"
+repository = "https://github.com/yourusername/remote-desktop-rs"
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# 共通機能
+remote-desktop-rs-common = { path = "../common" }
+
+# UI
+eframe = "0.21.0"
+egui = "0.21.0"
+egui_extras = "0.21.0"
+egui_glow = "0.21.0"
+image = { version = "0.24.5", features = ["png", "jpeg"] }
+
+# ネットワーク
+tungstenite = { version = "0.18.0", features = ["native-tls"] }
+url = "2.3.1"
+webrtc = { version = "0.6.0", optional = true }
+
+# シリアライズ
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+
+# ユーティリティ
+thiserror = "1.0.38"
+anyhow = "1.0.69"
+log = "0.4.17"
+env_logger = "0.10.0"
+base64 = "0.21.0"
+dirs = "5.0.0"
+chrono = { version = "0.4.23", features = ["serde"] }
+tokio = { version = "1.25.0", features = ["rt", "time", "sync", "macros"] }
+async-trait = "0.1.64"
+instant = "0.1"
+futures = "0.3.27"
+lazy_static = "1.4.0"
+parking_lot = "0.12.1"
+
+# 画像処理
+imageproc = "0.23.0"
+webp = { version = "0.2.2", optional = true }
+
+# プラットフォーム固有
+[target.'cfg(target_os = "windows")'.dependencies]
+winapi = { version = "0.3.9", features = ["winuser", "wincon"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+x11rb = { version = "0.12.0", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-foundation = "0.9.3"
+objc = "0.2.7"
+cocoa = "0.24.1"
+
+[features]
+default = ["clipboard", "system-tray"]
+clipboard = []
+system-tray = []
+webp-support = ["webp"]
+webrtc-support = ["webrtc"]
+x11-support = ["x11rb"]
+all = ["clipboard", "system-tray", "webp-support", "webrtc-support", "x11-support"]
+
+[lib]
+name = "remote_desktop_rs_client"
+path = "src/lib.rs"
+
+[[bin]]
+name = "remote-desktop-client"
+path = "src/main.rs"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[package.metadata.bundle]
+name = "リモートデスクトップクライアント"
+identifier = "com.example.remote-desktop-client"
+version = "0.1.0"
+copyright = "Copyright (c) 2023 Your Name"
+category = "Utility"
+short_description = "リモートデスクトップクライアント"
+long_description = """
+リモートコンピュータの画面を表示し、
+操作するためのクライアントアプリケーション。
+"""
+icon = ["assets/app.png", "assets/app.ico"]

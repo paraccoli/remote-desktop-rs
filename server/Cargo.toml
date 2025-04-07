@@ -1,0 +1,129 @@
+[package]
+name = "remote-desktop-rs-server"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "リモートデスクトップサーバー"
+repository = "https://github.com/yourusername/remote-desktop-rs"
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# 共通機能
+remote-desktop-rs-common = { path = "../common" }
+
+# ネットワーク
+tungstenite = { version = "0.18.0", features = ["native-tls"] }
+native-tls = "0.2.11"
+url = "2.3.1"
+webrtc = { version = "0.6.0", optional = true }
+uuid = { version = "1.3.0", features = ["v4"] }
+
+# シリアライズ
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+
+# ユーティリティ
+thiserror = "1.0.38"
+anyhow = "1.0.69"
+log = "0.4.17"
+env_logger = "0.10.0"
+base64 = "0.21.0"
+dirs = "5.0.0"
+chrono = { version = "0.4.23", features = ["serde"] }
+tokio = { version = "1.25.0", features = ["full"], optional = true }
+async-trait = { version = "0.1.64", optional = true }
+futures = { version = "0.3.27", optional = true }
+lazy_static = "1.4.0"
+parking_lot = "0.12.1"
+clap = { version = "4.1.8", features = ["derive"] }
+
+# 画像処理
+image = { version = "0.24.5", features = ["png", "jpeg"] }
+webp = { version = "0.2.2", optional = true }
+
+# システムトレイ
+tray-item = { version = "0.7.1", optional = true }
+sysinfo = "0.28.2"
+clipboard = "0.5.0"
+
+# スクリーンキャプチャ
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-capture = { version = "1.0.1", optional = true }
+windows = { version = "0.44.0", features = ["Win32_Graphics_Gdi", "Win32_UI_WindowsAndMessaging", "Win32_Foundation"], optional = true }
+winapi = { version = "0.3.9", features = ["winuser", "wincon", "winbase", "wingdi"], optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+x11rb = { version = "0.12.0", optional = true }
+xcb = { version = "1.2.1", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-foundation = { version = "0.9.3", optional = true }
+objc = { version = "0.2.7", optional = true }
+cocoa = { version = "0.24.1", optional = true }
+
+# クリップボード機能
+clipboard = { version = "0.5.0", optional = true }
+
+# システム情報
+sysinfo = { version = "0.28.2", optional = true }
+
+[features]
+default = ["system-tray", "clipboard", "screen-capture", "system-info", "file-transfer"]
+full = [
+    "system-tray", 
+    "clipboard", 
+    "screen-capture", 
+    "system-info", 
+    "file-transfer", 
+    "webrtc-support", 
+    "webp-support", 
+    "async-support", 
+    "windows-capture",
+    "x11-support",
+    "macos-support"
+]
+system-tray = ["tray-item"]
+clipboard = ["dep:clipboard"]
+screen-capture = []
+system-info = ["sysinfo"]
+file-transfer = []
+webrtc-support = ["webrtc", "tokio", "async-trait", "futures"]
+webp-support = ["webp"]
+async-support = ["tokio", "async-trait", "futures"]
+windows-capture = ["dep:windows-capture", "dep:windows", "dep:winapi"]
+x11-support = ["x11rb", "xcb"]
+macos-support = ["core-foundation", "objc", "cocoa"]
+
+[lib]
+name = "remote_desktop_rs_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "remote-desktop-server"
+path = "src/main.rs"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[package.metadata.bundle]
+name = "リモートデスクトップサーバー"
+identifier = "com.example.remote-desktop-server"
+version = "0.1.0"
+copyright = "Copyright (c) 2023 Your Name"
+category = "Utility"
+short_description = "リモートデスクトップサーバー"
+long_description = """
+リモートからのコンピュータ操作を可能にする
+サーバーアプリケーション。
+"""
+icon = ["assets/server-icon.png", "assets/server-icon.ico"]

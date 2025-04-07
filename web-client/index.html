@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>リモートデスクトップクライアント</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <div class="logo">
+                <h1>リモートデスクトップ</h1>
+            </div>
+            <div class="header-controls">
+                <button>設定</button>
+            </div>
+        </header>
+        
+        <div class="main-container">
+            <div class="sidebar">
+                <div class="connection-form">
+                    <h2>接続設定</h2>
+                    <form id="connect-form">
+                        <div class="form-group">
+                            <label for="host">ホスト名/IPアドレス</label>
+                            <input type="text" id="host" value="localhost" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="port">ポート</label>
+                            <input type="number" id="port" value="9090" min="1" max="65535" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="protocol">プロトコル</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="protocol" value="websocket" checked> WebSocket
+                                </label>
+                                <label>
+                                    <input type="radio" name="protocol" id="prefer-webrtc" value="webrtc"> WebRTC
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="use-tls">
+                                <input type="checkbox" id="use-tls"> TLSを使用 (wss://)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">ユーザー名 (オプション)</label>
+                            <input type="text" id="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">パスワード (オプション)</label>
+                            <input type="password" id="password">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">接続</button>
+                            <button type="button" id="disconnect-button" disabled>切断</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="control-panel">
+                    <h2>コントロール</h2>
+                    <div class="section">
+                        <h3>特殊キー</h3>
+                        <div class="key-buttons">
+                            <button class="key-button" data-keys="ctrl+alt+delete">Ctrl+Alt+Del</button>
+                            <button class="key-button" data-keys="windows">Windows</button>
+                            <button class="key-button" data-keys="alt+tab">Alt+Tab</button>
+                            <button class="key-button" data-keys="alt+f4">Alt+F4</button>
+                            <button class="key-button" data-keys="ctrl+c">Ctrl+C</button>
+                            <button class="key-button" data-keys="ctrl+v">Ctrl+V</button>
+                            <button class="key-button" data-keys="printscreen">Print Screen</button>
+                            <button class="key-button" data-keys="esc">Esc</button>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>表示設定</h3>
+                        <div class="form-group">
+                            <label for="quality-slider">画質: <span id="quality-value">80</span>%</label>
+                            <input type="range" id="quality-slider" min="10" max="100" step="5" value="80">
+                        </div>
+                        <div class="form-group">
+                            <label for="fps-slider">FPS制限: <span id="fps-value">30</span></label>
+                            <input type="range" id="fps-slider" min="5" max="60" step="5" value="30">
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>クリップボード</h3>
+                        <div class="clipboard-controls">
+                            <textarea id="clipboard-text" rows="3" placeholder="クリップボードのテキスト"></textarea>
+                            <div class="clipboard-buttons">
+                                <button id="get-clipboard">取得</button>
+                                <button id="set-clipboard">送信</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="display-container">
+                <div class="remote-display-container">
+                    <img id="remote-display" class="remote-display" src="" alt="リモート画面" tabindex="0">
+                    <div class="overlay" id="connection-overlay">
+                        <div class="message">
+                            <p>サーバーに接続していません</p>
+                            <p>左側のフォームから接続してください</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-basic">
+                <div class="connection-status disconnected">切断</div>
+                <div class="performance-metrics">
+                    <span class="fps-metric">0.0 FPS</span>
+                    <span class="latency-metric">0 ms</span>
+                    <span class="quality-metric">画質: 80%</span>
+                </div>
+                <button class="details-toggle">▽</button>
+            </div>
+            <div class="status-details" style="display: none;">
+                <div class="details-section">
+                    <h3>システム情報</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">OS:</span>
+                        <span class="detail-value os-info">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">CPU:</span>
+                        <span class="detail-value cpu-info">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">メモリ:</span>
+                        <span class="detail-value memory-info">-</span>
+                    </div>
+                </div>
+                <div class="details-section">
+                    <h3>ネットワーク統計</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">受信データ:</span>
+                        <span class="detail-value received-data">0 B</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">送信データ:</span>
+                        <span class="detail-value sent-data">0 B</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+</body>
+</html>

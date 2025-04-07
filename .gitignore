@@ -1,0 +1,68 @@
+# Rust生成物
+/target/
+**/target/
+Cargo.lock
+**/*.rs.bk
+
+# バイナリ・実行ファイル
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.pdb
+
+# プロファイル・ファイル
+*.pprof
+*.flame
+flamegraph.svg
+
+# ビルド生成物
+/dist/
+/out/
+/build/
+
+# エディタ・IDEの設定（.vscodeは除外しない）
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node.js & Web関連
+web-client/node_modules/
+web-client/dist/
+web-client/pkg/
+web-client/public/pkg/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# 環境変数・シークレット
+.env
+.env.local
+.env.*
+.env.*.local
+config.local.toml
+secrets.toml
+
+# ログファイル
+*.log
+logs/
+
+# 一時ファイル
+*.tmp
+*.temp
+.temp/
+.cache/
+
+# システム固有
+.DS_Store
+Thumbs.db
+
+# バックアップファイル
+*.bak
+*.backup
+*~

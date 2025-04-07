@@ -1,0 +1,74 @@
+[workspace]
+members = [
+    "common",
+    "client",
+    "server",
+    # "web-client" # 一時的に除外
+]
+default-members = ["client", "server"]
+resolver = "2"  # 明示的に設定
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 1
+debug = true
+
+# WebAssembly最適化プロファイル
+[profile.wasm-release]
+inherits = "release"
+lto = true
+opt-level = "s"
+codegen-units = 1
+
+# ネイティブバイナリ最適化プロファイル
+[profile.native-release]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+opt-level = 3
+
+# ベンチマーク用プロファイル
+[profile.bench]
+lto = true
+codegen-units = 1
+opt-level = 3
+debug = true
+
+# テスト用プロファイル
+[profile.test]
+opt-level = 1
+debug = true
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+repository = "https://github.com/yourusername/remote-desktop-rs"
+license = "MIT"
+readme = "README.md"
+
+[workspace.dependencies]
+# 共通の依存関係
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+anyhow = "1.0.69"
+thiserror = "1.0.38"
+log = "0.4.17"
+env_logger = "0.10.0"
+tokio = { version = "1.25.0", features = ["full"] }
+tungstenite = { version = "0.18.0", features = ["native-tls"] }
+image = { version = "0.24.5", features = ["png", "jpeg"] }
+dirs = "5.0.0"
+base64 = "0.21.0"
+chrono = { version = "0.4.23", features = ["serde"] }
+# 共通バージョンを定義
+wasm-bindgen = "0.2.84"
+wasm-bindgen-futures = "0.4.36"  # バージョンを統一
+js-sys = "0.3.61"
+web-sys = "0.3.61"
